@@ -13,6 +13,7 @@
 namespace fs = std::filesystem;
 
 #include <boost/endian/arithmetic.hpp>
+#include <boost/endian/conversion.hpp>
 namespace endian = boost::endian;
 
 #include <boost/iostreams/device/mapped_file.hpp>
