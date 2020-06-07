@@ -1,9 +1,6 @@
 // -*- mode: c++; -*-
-
-//
 // Copyright 2009 Glyph & Cog, LLC
 // Copyright 2019 Thinkoid, LLC
-//
 
 #include <cassert>
 #include <climits>
