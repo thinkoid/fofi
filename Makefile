@@ -1,5 +1,7 @@
 # -*- mode: Makefile; -*-
 
+CPPFLAGS = -I.
+
 CXXFLAGS = -g -O -std=c++1z -W -Wall
 LIBS = -lboost_iostreams -lstdc++fs
 
