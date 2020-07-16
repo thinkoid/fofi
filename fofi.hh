@@ -5,6 +5,10 @@
 #ifndef FOFI_FOFI_HH
 #define FOFI_FOFI_HH
 
+#include <defs.hh>
+
+#include <iterator>
+
 #include <boost/endian/arithmetic.hpp>
 #include <boost/endian/conversion.hpp>
 
@@ -197,24 +201,21 @@ bool literal_int(Iterator &iter, Iterator last, int &i)
 template< typename Iterator, typename T >
 bool sized_integral(Iterator &iter, Iterator last, T &attr, size_t n)
 {
-    assert(n <= sizeof attr);
+    ASSERT(n <= sizeof attr);
 
     using namespace detail;
     ITERATOR_GUARD(iter);
 
     if (iter != last) {
-        int val = 0;
+        size_t i = 0, value = 0;
 
-        size_t i = 0;
-
-        for (; i < n && iter != last; ++i, ++iter) {
-            reinterpret_cast< char * >(&val)[i] = *iter;
-        }
+        for (; i < n && iter != last; ++i, ++iter)
+            reinterpret_cast< char * >(&value)[i] = *iter;
 
         if (i < n)
             return false;
 
-        attr = val;
+        attr = value;
 
         PARSE_SUCCESS;
     }

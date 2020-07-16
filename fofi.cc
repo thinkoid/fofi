@@ -2,13 +2,7 @@
 // Copyright 2009 Glyph & Cog, LLC
 // Copyright 2019 Thinkoid, LLC
 
-#include <cassert>
-#include <climits>
-#include <cstdio>
-#include <cstring>
-
 #include <iostream>
-#include <vector>
 #include <filesystem>
 namespace fs = std::filesystem;
 
