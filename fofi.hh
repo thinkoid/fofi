@@ -76,7 +76,7 @@ ITERATOR_CONDITIONAL(random_access);
 
 template< typename Iterator, typename Distance >
 inline typename std::enable_if_t< is_forward_iterator< Iterator >, bool >
-safe_advance(Iterator first, Iterator &iter, Iterator last, Distance n)
+safe_advance(Iterator, Iterator &iter, Iterator last, Distance n)
 {
     ASSERT(0 == n || 0 < n);
     for (; n && iter != last; --n, ++iter) ;
@@ -90,7 +90,7 @@ safe_advance(Iterator first, Iterator &iter, Iterator last, Distance n)
     if (n > 0)
         for (; n && iter != last; --n, ++iter) ;
     else if (n < 0)
-        for (; n && iter != last; ++n, --iter) ;
+        for (; n && iter != first; ++n, --iter) ;
 
     return 0 == n;
 }
@@ -104,7 +104,7 @@ safe_advance(Iterator first, Iterator &iter, Iterator last, Distance n)
 
     const auto off = n < 0
         ? std::max(difference_type(n), std::distance(iter, first))
-        : std::min(difference_type(n), std::distance(iter, last));
+        : std::min(difference_type(n), std::distance(iter,  last));
 
     iter += off;
     n -= off;

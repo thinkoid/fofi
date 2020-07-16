@@ -2,8 +2,8 @@
 
 CPPFLAGS = -I.
 
-CXXFLAGS = -g -O -std=c++1z -W -Wall
-LIBS = -lboost_iostreams -lstdc++fs
+CXXFLAGS = -ggdb3 -O0 -std=c++1z -W -Wall
+LIBS = -lboost_unit_test_framework -lboost_iostreams -lstdc++fs
 
 DEPENDDIR = ./.deps
 DEPENDFLAGS = -M
@@ -11,7 +11,7 @@ DEPENDFLAGS = -M
 SRCS := $(wildcard *.cc)
 OBJS := $(patsubst %.cc,%.o,$(SRCS))
 
-TARGETS = $(patsubst %.o,%,$(OBJS))
+TARGETS = fofi test
 
 all: $(TARGETS)
 
@@ -26,7 +26,10 @@ $(DEPENDDIR):
 
 %: %.cc
 
-%: %.o
+fofi: fofi.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+test: test.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cc

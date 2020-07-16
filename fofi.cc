@@ -63,8 +63,8 @@ int main(int, char **argv)
     if (identify(argv[1], result)) {
         std::cout << name_of(result) << std::endl;
         return 0;
-    } else {
-        std::cerr << "error" << std::endl;
-        return true;
     }
+
+    std::cerr << "error" << std::endl;
+    return 1;
 }
