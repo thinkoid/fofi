@@ -427,12 +427,15 @@ bool identify_otf(Iterator &iter, Iterator last, font_type &result)
     using namespace xpdf::parser;
     using namespace xpdf::parser::detail;
 
-    ITERATOR_GUARD(iter);   
+    ITERATOR_GUARD(iter);
     const auto first = iter;
 
     if (literal_string(iter, last, "OTTO")) {
         int short n = 0;
 
+        //
+        // nTables follows the identifier "OTTO", at offset 4.
+        //
         if (integral(iter, last, n)) {
             endian::big_to_native_inplace(n);
             assert(n >= 0);
@@ -440,13 +443,23 @@ bool identify_otf(Iterator &iter, Iterator last, font_type &result)
             if (!safe_advance(first, iter, last, 6))
                 return false;
 
+            //
+            // First table record starts at offset 12. Each table record is 16
+            // bytes long.
+            //
             for (size_t i = 0; i < size_t(n); ++i) {
                 if (literal_string(iter, last, "CFF ")) {
+                    //
+                    // The table tag is CFF:
+                    //
                     if (!safe_advance(first, iter, last, 4))
-                        break;
+                        return false;
 
                     int off = 0;
 
+                    //
+                    // The offset from beginning(!) of file:
+                    //
                     if (integral(iter, last, off)) {
                         endian::big_to_native_inplace(off);
 
@@ -471,13 +484,16 @@ bool identify_otf(Iterator &iter, Iterator last, font_type &result)
                                 }
                             }
                         }
-                    }
 
-                    return false;
+                        if (!safe_advance(first, iter, last, 4))
+                            return false;
+                    } else {
+                        return false;
+                    }
                 }
 
                 if (!safe_advance(first, iter, last, 16))
-                    break;
+                    return false;
             }
         }
     }
