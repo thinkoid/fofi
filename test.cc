@@ -20,6 +20,7 @@ namespace data = boost::unit_test::data;
 # include <boost/iterator/iterator_adaptor.hpp>
 
 #include <fofi.hh>
+#include <detail/fofi.hh>
 
 template< typename T >
 struct forward_iterator : boost::iterator_adaptor<
@@ -71,8 +72,7 @@ BOOST_DATA_TEST_CASE(
     forward_advance_,
     data::make(forward_advance_dataset), pbeg, p, pend, p2, off, result)
 {
-    using namespace xpdf::parser;
-    using namespace xpdf::parser::detail;
+    using namespace xpdf::fofi::detail;
 
     using iterator = forward_iterator< char const >;
     iterator first(pbeg), iter(p), start(iter), last(pend);
@@ -139,8 +139,7 @@ BOOST_DATA_TEST_CASE(
     bidirectional_advance_,
     data::make(bidirectional_advance_dataset), pbeg, p, pend, p2, off, result)
 {
-    using namespace xpdf::parser;
-    using namespace xpdf::parser::detail;
+    using namespace xpdf::fofi::detail;
 
     using iterator = bidirectional_iterator< char const >;
     iterator first(pbeg), iter(p), start(iter), last(pend);
@@ -219,8 +218,7 @@ BOOST_DATA_TEST_CASE(
     random_access_advance_,
     data::make(random_access_advance_dataset), pbeg, p, pend, p2, off, result)
 {
-    using namespace xpdf::parser;
-    using namespace xpdf::parser::detail;
+    using namespace xpdf::fofi::detail;
 
     using iterator = random_access_iterator< char const >;
     iterator first(pbeg), iter(p), start(iter), last(pend);

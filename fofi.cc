@@ -10,58 +10,60 @@ namespace fs = std::filesystem;
 namespace io = boost::iostreams;
 
 #include <fofi.hh>
+#include <detail/fofi.hh>
 
-static inline const char *name_of(xpdf::fofi::font_type arg)
-{
-    static const char *arr[] = {
-        "Type1 font in PFA format",
-        "Type1 font in PFB format",
-        "8-bit CFF font",
-        "CID CFF font",
-        "TrueType font",
-        "TrueType collection",
-        "OpenType container of 8-bit CFF font",
-        "OpenType container of CID-keyed CFF font",
-        "(unknown)"
-    };
+namespace xpdf::fofi {
 
-    return arr[arg];
-}
-
-////////////////////////////////////////////////////////////////////////
-
-static bool
-identify_byextension(const char *filepath, xpdf::fofi::font_type &result)
+bool identify_byextension(const char *filepath, xpdf::fofi::font_type &result)
 {
     if (fs::path(filepath).extension() == ".dfont")
-        return result = xpdf::fofi::DFont, true;
+        return result = xpdf::fofi::FONT_DFONT, true;
 
     return false;
 }
 
-static bool
-identify_bycontent(const char *filepath, xpdf::fofi::font_type &result)
+bool identify_bycontent(const char *filepath, xpdf::fofi::font_type &result)
 {
-    io::mapped_file_source src(filepath);
-    auto iter = src.begin(), last = src.end();
-    return xpdf::fofi::identify(iter, last, result);
+    if (fs::exists(filepath)) {
+        io::mapped_file_source src(filepath);
+        auto iter = src.begin(), last = src.end();
+        return detail::identify(iter, last, result);
+    }
+
+    return result = FONT_ERROR, false;
 }
 
-static bool
-identify(const char *filepath, xpdf::fofi::font_type &result)
+bool identify(const char *filepath, xpdf::fofi::font_type &result)
 {
     return identify_byextension(filepath, result) ||
            identify_bycontent(filepath, result);
 }
 
-////////////////////////////////////////////////////////////////////////
+bool identify(const char *pbuf, size_t n, xpdf::fofi::font_type &type)
+{
+    return detail::identify(pbuf, pbuf + n, type);
+}
+
+} // namespace xpdf::fofi
 
 int main(int, char **argv)
 {
-    xpdf::fofi::font_type result;
+    static const char *names[] = {
+        "Type1 font in PFA format",
+        "Type1 font in PFB format",
+        "8-bit CFF font",
+        "CID CFF font",
+        "TrueType font",
+        "TrueType font collection",
+        "OpenType container of 8-bit CFF fonts",
+        "OpenType container of CID-keyed CFF fonts",
+        "(unknown)"
+    };
 
-    if (identify(argv[1], result)) {
-        std::cout << name_of(result) << std::endl;
+    xpdf::fofi::font_type type;
+
+    if (xpdf::fofi::identify(argv[1], type)) {
+        std::cout << names[type] << std::endl;
         return 0;
     }
 
